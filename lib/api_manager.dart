@@ -27,4 +27,27 @@ class APIManager{
     print("Fetch Success");
     return deviceModel;
   }
+
+  Future<Device> getDeviceById(String id) async{
+    var client = http.Client();
+    var device;
+    Map<String,dynamic> _map = Map<String,dynamic>();
+    _map['device_id'] = id;
+    try{
+      print('${App.apiUriBase}device');
+      var response = await client.post('${App.apiUriBase}/device',body: _map);
+      if(response.statusCode == 200){
+        var jsonString = response.body;
+        var jsonMap = jsonDecode(jsonString);
+        print(jsonMap);
+        device = Device.fromJson(jsonMap);
+
+      }
+    }catch(ex){
+      print('Error in fetching from API  ${ex}');
+      return device;
+    }
+    print("Fetch Success");
+    return device;
+  }
 }

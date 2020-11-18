@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:smrs/constants.dart';
@@ -7,6 +9,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'device_list_card.dart';
 
 // TODO: Pull down to refresh
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -19,12 +22,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Future<DevicesModel> _deviceModel;
+  Timer timer;
+
 
   @override
   void initState() {
+
     _deviceModel = APIManager().getDevices();
+    timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      setState(() {
+        _deviceModel = APIManager().getDevices();
+      });
+      print("updated");
+
+    });
     print("InitState");
     super.initState();
+  }
+  @override
+  void dispose() {
+    // timer.cancel();
+    // print("dispose called");
+    super.dispose();
   }
 
   @override
@@ -39,6 +58,26 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         child: deviceListBuilder(),
+      ),
+    bottomNavigationBar: Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RaisedButton(
+              color: Color(App.btnColor),
+              highlightColor: Colors.yellow,
+              splashColor: Colors.green,
+              child: Text("ADD DEVICE",
+                  style: TextStyle(color: Colors.white, fontSize: 20.0)),
+              onPressed: () {
+                print("Button press");
+                // LiquidAnimation la = LiquidAnimation();
+                // liquidAnimation.setUsage(0.95);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -56,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: snapshot.data.devices.length,
                   itemBuilder: (context, index) {
                     var device = snapshot.data.devices[index];
-                    return DeviceListCard(device: device);
+                    return DeviceListCard(device: device,timer: timer,);
                   },
                 ),
               );

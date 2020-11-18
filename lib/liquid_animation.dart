@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
@@ -8,8 +10,9 @@ import 'package:smrs/constants.dart';
 class LiquidAnimation extends StatefulWidget {
   // double liquidValue = 0.0;
   Device device;
+  final controller;
 
-  LiquidAnimation({this.device});
+  LiquidAnimation({this.device, this.controller});
 
   // setUsage(double value){
   //   // this.liquidValue = device.level;
@@ -18,13 +21,19 @@ class LiquidAnimation extends StatefulWidget {
   State<StatefulWidget> createState() => _LiquidAnimationState(device: device);
 }
 
+//TODO: make it dynamic update
+// How to dynamically update stateless widget from another widgetl
 class _LiquidAnimationState extends State<LiquidAnimation>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Device device;
+  Future<Device> futureDevice;
 
   _LiquidAnimationState({this.device});
 
+  Timer timer;
+  Stream stream;
+  // Stream<Device> get strean => _animationController.
   @override
   void initState() {
     super.initState();
@@ -35,18 +44,45 @@ class _LiquidAnimationState extends State<LiquidAnimation>
 
     _animationController.addListener(() => setState(() {}));
     _animationController.animateTo(device.level);
-    // _animationController.value  = 45;
+
+    stream = widget.controller.stream;
+    stream.listen((event) {
+      futureDevice = event;
+    });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final percentage = _animationController.value * 100;
+    return FutureBuilder(
+      future: futureDevice,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          device = snapshot.data;
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            _animationController.animateTo(device.level);
+          });
+
+          return buildLiquidAnimation(device);
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('${snapshot.error}'),
+          );
+        } else {
+          return buildLiquidAnimation(device);
+        }
+      },
+    );
+  }
+
+  Expanded buildLiquidAnimation(Device device) {
+    double percentage = device.level * 100;
     return Expanded(
       child: LiquidLinearProgressIndicator(
           value: _animationController.value,
@@ -82,12 +118,16 @@ class _LiquidAnimationState extends State<LiquidAnimation>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  device.mode == "normal"? CircleButton(color: Colors.yellow): CircleButton(color: Colors.red,),
+                  device.mode == "normal"
+                      ? CircleButton(color: Colors.yellow)
+                      : CircleButton(
+                          color: Colors.red,
+                        ),
                   SizedBox(
                     width: 10,
                   ),
                   Text(
-                    device.mode == "normal"? "Normal mode": "Active mode",
+                    device.mode == "normal" ? "Normal mode" : "Active mode",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22.0,
@@ -138,7 +178,7 @@ class CircleButton extends StatelessWidget {
     double size = 30.0;
 
     return new InkResponse(
-      onTap: (){
+      onTap: () {
         print("button press");
       },
       child: new Container(

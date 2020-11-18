@@ -1,23 +1,34 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:smrs/device_info.dart';
 import 'package:smrs/constants.dart';
 import 'package:smrs/device_card.dart';
 
-class DeviceListCard extends StatelessWidget {
-  const DeviceListCard({
+class DeviceListCard extends StatefulWidget {
+  DeviceListCard({
     Key key,
     @required this.device,
+    this.timer
   }) : super(key: key);
 
   final Device device;
+  final Timer timer;
+  @override
+  _DeviceListCardState createState() => _DeviceListCardState();
+}
 
+class _DeviceListCardState extends State<DeviceListCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DeviceCard(device).getDevice()),
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) {
+            widget.timer.cancel();
+            return DeviceCard(widget.device);
+          }),
+
         );
       },
       child: Container(
@@ -48,7 +59,7 @@ class DeviceListCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    device.deviceId,
+                    widget.device.deviceId,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -56,17 +67,17 @@ class DeviceListCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    device.deviceName == null ? "" : device.deviceName,
+                    widget.device.deviceName == null ? "" : widget.device.deviceName,
                     style: TextStyle(color: Colors.white),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    "${(device.level * 100).ceil()} %",
+                    "${(widget.device.level * 100).ceil()} %",
                     style: TextStyle(color: Colors.white),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    "${App.dateTimeToString(device.lastSeen)}",
+                    "${App.dateTimeToString(widget.device.lastSeen)}",
                     style: TextStyle(color: Colors.white),
                     overflow: TextOverflow.ellipsis,
                   ),
