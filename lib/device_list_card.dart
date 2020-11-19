@@ -31,23 +31,26 @@ class _DeviceListCardState extends State<DeviceListCard> {
 
         );
       },
-      child: Container(
+      child: Container(decoration: BoxDecoration(color: Color(App.bgCardColor)),
         height: 100,
         margin: const EdgeInsets.all(8.0),
         child: Row(
           children: <Widget>[
-            Card(
-              color: Colors.transparent,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              // elevation: 5,
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Image.asset(
-                  "assets/mosquito_repellent.png",
-                  fit: BoxFit.contain,
+            Padding(
+              padding: EdgeInsets.all(5),
+              child: Card(
+                color: Colors.transparent,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                // elevation: 5,
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Image.asset(
+                    "assets/mosquito_repellent.png",
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),

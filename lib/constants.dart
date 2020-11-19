@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 class App{
   static int baseColor = 0xFF183447;
   static int bgColor = 0xFF183447;
+  static int bgCardColor = 0xFF112737;
   static int btnColor = 0xFF009688;
   static String appName = 'SMRS';
 
