@@ -24,21 +24,19 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<DevicesModel> _deviceModel;
   Timer timer;
 
-
   @override
   void initState() {
-
     _deviceModel = APIManager().getDevices();
-    timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
       setState(() {
         _deviceModel = APIManager().getDevices();
       });
       print("updated");
-
     });
     print("InitState");
     super.initState();
   }
+
   @override
   void dispose() {
     // timer.cancel();
@@ -59,8 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         child: deviceListBuilder(),
       ),
-    bottomNavigationBar: Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -72,8 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(color: Colors.white, fontSize: 20.0)),
               onPressed: () {
                 print("Button press");
-                // LiquidAnimation la = LiquidAnimation();
-                // liquidAnimation.setUsage(0.95);
               },
             ),
           ],
@@ -84,49 +80,59 @@ class _MyHomePageState extends State<MyHomePage> {
 
   FutureBuilder<DevicesModel> deviceListBuilder() {
     return FutureBuilder<DevicesModel>(
-        future: _deviceModel,
-        builder: (context, snapshot) {
-          // print("SomeData ${snapshot.hasData}");
-          if (snapshot.hasData) {
-            if (snapshot.data.devices.length > 0) {
-              return Scrollbar(
-                child: ListView.builder(
-                  
-                  itemCount: snapshot.data.devices.length,
-                  itemBuilder: (context, index) {
-                    var device = snapshot.data.devices[index];
-                    return DeviceListCard(device: device,timer: timer,);
-                  },
-                ),
-              );
-            } else {
-              return Container(
-                child: Center(
-                  child: Text(
-                    "No device registered",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              );
-            }
+      future: _deviceModel,
+      builder: (context, snapshot) {
+        print("SomeData ${snapshot.hasData}");
+        if (snapshot.hasData) {
+          if (snapshot.data.devices.length > 0) {
+            return Scrollbar(
+              child: ListView.builder(
+                itemCount: snapshot.data.devices.length,
+                itemBuilder: (context, index) {
+                  var device = snapshot.data.devices[index];
+                  return DeviceListCard(
+                    device: device,
+                    timer: timer,
+                  );
+                },
+              ),
+            );
           } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Please wait...",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),),
-                  SizedBox(height: 10,),
-                  CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                  ),
-                ],
+            return Container(
+              child: Center(
+                child: Text(
+                  "No device registered",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             );
           }
-        },
-      );
+        } else {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Please wait...",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                ),
+              ],
+            ),
+          );
+        }
+      },
+    );
   }
 }
