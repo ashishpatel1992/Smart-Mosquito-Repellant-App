@@ -31,7 +31,7 @@ class _DeviceListCardState extends State<DeviceListCard> {
 
         );
       },
-      child: Container(decoration: BoxDecoration(color: Color(App.bgCardColor)),
+      child: Container(decoration: BoxDecoration(color: Color(App.bgCardColor), borderRadius: BorderRadius.circular(8)),
         height: 100,
         margin: const EdgeInsets.all(8.0),
         child: Row(
@@ -57,7 +57,8 @@ class _DeviceListCardState extends State<DeviceListCard> {
             SizedBox(
               width: 16,
             ),
-            Flexible(
+            Padding(
+              padding: const EdgeInsets.all(5.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

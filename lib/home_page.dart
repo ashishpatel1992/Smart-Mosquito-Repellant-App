@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:smrs/constants.dart';
@@ -57,24 +57,120 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         child: deviceListBuilder(),
       ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RaisedButton(
-              color: Color(App.btnColor),
-              highlightColor: Colors.yellow,
-              splashColor: Colors.green,
-              child: Text("ADD DEVICE",
-                  style: TextStyle(color: Colors.white, fontSize: 20.0)),
-              onPressed: () {
-                print("Button press");
-              },
-            ),
-          ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(color: Color(App.bgCardColor)),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RaisedButton(
+                color: Color(App.btnColor),
+                highlightColor: Colors.yellow,
+                splashColor: Colors.green,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("ADD DEVICE",
+                      style: TextStyle(color: Colors.white, fontSize: 20.0)),
+                ),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        TextEditingController _tfDeviceId =
+                            TextEditingController();
+                        TextEditingController _tfDeviceName =
+                            TextEditingController();
+                        final _formKey = GlobalKey<FormState>();
+                        bool isProcessing = false;
+                        // setState(() {
+                        //   isProcessing = false;
+                        // });
+                        return AlertDialog(
+                          title: Text("Add a new device"),
+                          backgroundColor: Color(App.bgCardColor),
+                          actions: [
+                            FlatButton(
+                                child: Text('CANCEL',
+                                    style: TextStyle(color: Colors.white)),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                            FlatButton(
+                              child: Text("ADD",
+                                  style: TextStyle(color: Colors.white)),
+                              // color: Color(App.btnColor),
+                              onPressed: () {
+                                print("Btn Press");
+                                print(_tfDeviceName.text);
+                                print(_tfDeviceId.text);
+                                if (_formKey.currentState.validate()) {
+                                  print("Data is Valid");
+                                  setState(() {
+                                    isProcessing = true;
+                                  });
+                                  // _tfDeviceName.addListener(() {
+                                  //   print("Do Task");
+                                  //   setState(() {
+                                  //     isProcessing = true;
+                                  //   });
+                                  // });
+                                  // _tfDeviceName.notifyListeners();
+
+                                  sleep(const Duration(seconds:2));
+                                  Navigator.pop(context);
+                                }
+                              },
+                              padding: EdgeInsets.all(18.0),
+                            )
+                          ],
+                          content: Container(
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  buildTextFieldForAlertDialog(
+                                      _tfDeviceId, 'Enter Device ID'),
+                                  buildTextFieldForAlertDialog(
+                                      _tfDeviceName, 'Enter Device Name'),
+                                  SizedBox(height: 25,),
+                                  isProcessing
+                                      ? Center(child: CircularProgressIndicator(backgroundColor: Colors.white,))
+                                      : Container(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                },
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  TextFormField buildTextFieldForAlertDialog(
+      TextEditingController _tfDeviceId, String hintText) {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(color: Colors.white60),
+      ),
+      style: TextStyle(color: Colors.white),
+      autofocus: true,
+      controller: _tfDeviceId,
+      autocorrect: false,
+      enabled: true,
+      cursorColor: Colors.white,
+      validator: (value) {
+        if (value.isEmpty) {
+          return "This field Cannot be empty";
+        }
+        return null;
+      },
     );
   }
 

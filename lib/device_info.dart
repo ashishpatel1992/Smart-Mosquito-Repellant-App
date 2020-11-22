@@ -17,7 +17,8 @@ class DevicesModel {
   List<Device> devices;
 
   factory DevicesModel.fromJson(Map<String, dynamic> json) => DevicesModel(
-    count: json["count"],
+    count: (json["count"]),
+    // devices: [Device(deviceId: "avsd",deviceName: "asff",deviceStatus: int.parse("1"),lastSeen: int.parse("347255"),level: double.parse("0.45"),mode: "normal")],
     devices: List<Device>.from(json["devices"].map((x) => Device.fromJson(x))),
   );
 
@@ -48,10 +49,10 @@ class Device {
   factory Device.fromJson(Map<String, dynamic> json) => Device(
     deviceId: json["device_id"],
     deviceName: json["device_name"],
-    level: json["level"].toDouble(),
+    level: double.parse(json["level"]),
     mode: json["mode"],
-    deviceStatus: json["device_status"],
-    lastSeen: json["last_seen"],
+    deviceStatus: int.parse(json["device_status"]),
+    lastSeen: (json["last_seen"]),
   );
 
   Map<String, dynamic> toJson() => {

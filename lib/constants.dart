@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 class App{
   static int baseColor = 0xFF183447;
   static int bgColor = 0xFF183447;
-  static int bgCardColor = 0xFF112737;
+  static int bgCardColor = 0xFF152C3C;
   static int btnColor = 0xFF009688;
   static String appName = 'SMRS';
 
-  static String apiUriBase = "http://localhost:3001/";
+  static String apiUriBase = "https://py-test-mosquito.herokuapp.com"; // "https://bdcc4a743681.ngrok.io/"
   static int apiRefreshRate = 5;
   static Map<int, Color> colorSwatch = {
     50: Color.fromRGBO(24, 52, 71, .1),
