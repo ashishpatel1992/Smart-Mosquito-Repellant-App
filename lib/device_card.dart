@@ -153,19 +153,3 @@ class _DeviceCardState extends State<DeviceCard> {
     );
   }
 }
-
-// class DeviceCard{
-//   // LiquidAnimation liquidAnimation;
-//   // double usage;
-//   // Device device;
-//
-//   DeviceCard(Device _device){
-//     device = _device;
-//     usage = _device.level;
-//   }
-//
-//   Widget getDevice(){
-//
-//
-//   }
-// }

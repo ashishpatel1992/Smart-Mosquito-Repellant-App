@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:smrs/api_manager.dart';
 
 import 'package:smrs/device_info.dart';
 import 'package:smrs/constants.dart';
+import 'package:smrs/device_toggle_types.dart';
 
 // ignore: must_be_immutable
 class LiquidAnimation extends StatefulWidget {
@@ -33,6 +36,7 @@ class _LiquidAnimationState extends State<LiquidAnimation>
 
   Timer timer;
   Stream stream;
+
   // Stream<Device> get strean => _animationController.
   @override
   void initState() {
@@ -115,49 +119,123 @@ class _LiquidAnimationState extends State<LiquidAnimation>
               SizedBox(
                 height: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  device.mode == "normal"
-                      ? CircleButton(color: Colors.yellow)
-                      : CircleButton(
-                          color: Colors.red,
+              InkWell(
+                onTap: () {
+                  Future<ToggleTypes> response;
+                  if (device.mode == 1) {
+                    setState(() {
+                      device.mode = 0;
+                    });
+                    response = APIManager.toggleMode(
+                        device.deviceId, App.DEVICE_MODE_NORMAL);
+                  } else {
+                    setState(() {
+                      device.mode = 1;
+                    });
+                    response = APIManager.toggleMode(
+                        device.deviceId, App.DEVICE_MODE_ACTIVE);
+                  }
+                  // TODO fix toggling issue after active mode then off mode fix! needed! urgent!
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    duration: Duration(seconds: App.SNACKBAR_DELAY),
+                    content: Text(
+                        'Switching to ${device.mode == 1 ? "ACTIVE" : "NORMAL"} mode' ),
+                  ));
+                  response.then((resp) {
+                    setState(() {
+                      print(resp.success);
+                      device.mode =
+                          resp.requestResponse == App.DEVICE_MODE_ACTIVE
+                              ? 1
+                              : 0;
+                    });
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(color: Color(0x33080808)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      device.mode == 0
+                          ? CircleButton(color: Colors.yellow)
+                          : CircleButton(
+                              color: Colors.red,
+                            ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        device.mode == 0 ? App.DEVICE_TEXT_NORMAL : App.DEVICE_TEXT_ACTIVE,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.w900,
                         ),
-                  SizedBox(
-                    width: 10,
+                      )
+                    ],
                   ),
-                  Text(
-                    device.mode == "normal" ? "Normal mode" : "Active mode",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  )
-                ],
+                ),
               ),
               SizedBox(
                 height: 10,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleButton(
-                    // iconData: Icons.adjust,
-                    color: Colors.green,
+              InkWell(
+                onTap: () {
+                  Future<ToggleTypes> response;
+                  if (device.deviceStatus == 1) {
+                    setState(() {
+                      device.deviceStatus = 0;
+                    });
+                    response =
+                        APIManager.toggleOnOff(device.deviceId, App.DEVICE_OFF);
+                  } else {
+                    setState(() {
+                      device.deviceStatus = 1;
+                    });
+                    response =
+                        APIManager.toggleOnOff(device.deviceId, App.DEVICE_ON);
+                  }
+
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    duration: Duration(seconds: App.SNACKBAR_DELAY),
+                    content: Text(
+                        'Turning the device ${device.deviceStatus == 1 ? "ON" : "OFF"}'),
+                  ));
+                  response.then((resp) {
+                    setState(() {
+                      print(resp.success);
+                      device.deviceStatus =
+                          resp.requestResponse == App.DEVICE_ON ? 0 : 1;
+                    });
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(color: Color(0x33080808)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleButton(
+                        // iconData: Icons.adjust,
+                        color: device.deviceStatus == 1
+                            ? Colors.green
+                            : Colors.red,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        device.deviceStatus == 1 ? "On" : "Off",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    device.deviceStatus == 1 ? "On" : "Off",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  )
-                ],
+                ),
               )
             ],
           )),
@@ -178,16 +256,15 @@ class CircleButton extends StatelessWidget {
     double size = 30.0;
 
     return new InkResponse(
-      onTap: () {
-        print("button press");
-      },
+      onTap: onTap,
       child: new Container(
         width: size,
         height: size,
         decoration: new BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
+            color: color,
+            // shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(width: 2,color: Colors.white70)),
         child: new Icon(
           iconData,
           color: Colors.black,

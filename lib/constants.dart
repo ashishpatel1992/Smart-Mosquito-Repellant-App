@@ -8,7 +8,7 @@ class App{
   static String appName = 'SMRS';
 
   static String apiUriBase = "https://py-test-mosquito.herokuapp.com"; // "https://bdcc4a743681.ngrok.io/"
-  static int apiRefreshRate = 5;
+  static int apiRefreshRate = 2;
   static Map<int, Color> colorSwatch = {
     50: Color.fromRGBO(24, 52, 71, .1),
     100: Color.fromRGBO(24, 52, 71, .2),
@@ -21,7 +21,13 @@ class App{
     800: Color.fromRGBO(24, 52, 71, .9),
     900: Color.fromRGBO(24, 52, 71, 1),
   };
-
+  static String DEVICE_ON = "1";
+  static String DEVICE_OFF = "0";
+  static String DEVICE_MODE_ACTIVE = "1";
+  static String DEVICE_MODE_NORMAL = "0";
+  static String DEVICE_TEXT_ACTIVE = "ACTIVE MODE";
+  static String DEVICE_TEXT_NORMAL = "NORMAL MODE";
+  static int SNACKBAR_DELAY = 2;
   static String dateTimeToString(int value){
     // print(value);
     DateFormat dateFormat = DateFormat('dd-MMM-y HH:mm');

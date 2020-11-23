@@ -42,7 +42,7 @@ class Device {
   String deviceId;
   String deviceName;
   double level;
-  String mode;
+  int mode;
   int deviceStatus;
   int lastSeen;
 
@@ -50,7 +50,7 @@ class Device {
     deviceId: json["device_id"],
     deviceName: json["device_name"],
     level: double.parse(json["level"]),
-    mode: json["mode"],
+    mode: int.parse(json["mode"]),
     deviceStatus: int.parse(json["device_status"]),
     lastSeen: (json["last_seen"]),
   );

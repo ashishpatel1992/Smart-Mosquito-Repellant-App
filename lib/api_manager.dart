@@ -1,12 +1,51 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
 
 import 'package:smrs/constants.dart';
 import 'package:smrs/device_info.dart';
+import 'package:smrs/device_toggle_types.dart';
 
 class APIManager {
+
+  static Future<ToggleTypes> toggleCommons(String deviceId, String requestType, String request) async{
+    var client = http.Client();
+    var toggleTypeData;
+    var map = new Map<String,dynamic>();
+    map['device_id'] = deviceId;
+    map['request_type'] = requestType;
+    map['request'] = request;
+    try {
+      var response = await client.post('${App.apiUriBase}/device',body: jsonEncode(map),headers: {HttpHeaders.CONTENT_TYPE: "application/json"} );
+
+      // print(jsonEncode(response));
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        print(jsonString);
+        var jsonMap = jsonDecode(jsonString);
+        // print(jsonMap);
+        toggleTypeData = ToggleTypes.fromJson(jsonMap);
+      }
+    } catch (ex) {
+      print('Error in fetching from API  ${ex}');
+      return toggleTypeData;
+    }
+    print("Fetch Success");
+    return toggleTypeData;
+  }
+  Future<dynamic> addNewDevice() async{
+
+  }
+
+  static Future<ToggleTypes> toggleMode(String deviceId, String request) async{
+    return toggleCommons(deviceId,"mode", request);
+  }
+  static Future<ToggleTypes> toggleOnOff(String deviceId,String request) async{
+    return toggleCommons(deviceId,"onoff", request);
+  }
+
   Future<DevicesModel> getDevices() async {
     var client = http.Client();
     var deviceModel;
@@ -34,7 +73,7 @@ class APIManager {
     // Map<String, dynamic> _map = Map<String, dynamic>();
     // _map['device_id'] = id;
     try {
-      print('${App.apiUriBase}device');
+      print('${App.apiUriBase}/device');
       var response = await client.get('${App.apiUriBase}/device/$id');
       // print(response.body);
       print(response.statusCode);
