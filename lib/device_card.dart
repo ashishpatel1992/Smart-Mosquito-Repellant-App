@@ -9,6 +9,7 @@ import 'constants.dart';
 import 'package:smrs/device_info.dart';
 
 import 'package:smrs/liquid_animation.dart';
+import 'package:smrs/device_history_stats.dart';
 
 class DeviceCard extends StatefulWidget {
   double usage;
@@ -59,6 +60,21 @@ class _DeviceCardState extends State<DeviceCard> {
     return Scaffold(
       backgroundColor: Color(App.bgColor),
       appBar: AppBar(
+        actions: [
+          FlatButton(
+            child: Icon(
+              Icons.analytics,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) {
+                    return DeviceHistoryCard(widget.device.deviceId);
+                  },
+                  fullscreenDialog: true));
+            },
+          )
+        ],
         title: Text(
           widget.device.deviceName == null
               ? widget.device.deviceId
@@ -80,15 +96,24 @@ class _DeviceCardState extends State<DeviceCard> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    LiquidAnimation(device: myDevice, controller: _controller),
+                    LiquidAnimation(
+                        device: myDevice,
+                        controller: _controller,
+                        timer: timer),
                     Container(
                       color: Colors.black87,
                       padding: EdgeInsets.all(10.0),
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text("Device seen on ${App.dateTimeToString(snapshot.data.lastSeen)}"),
-                          Text("Motion detected on ${App.dateTimeToString(snapshot.data.lastMotionSeen)} "),
+                          Text(
+                              "Device last seen on ${App.dateTimeToString(snapshot.data.lastSeen)}",
+                              overflow: TextOverflow.ellipsis),
+                          Text(
+                            "Last motion detected at ${App.dateTimeToString(snapshot.data.lastMotionSeen)} ",
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
                     )

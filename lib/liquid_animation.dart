@@ -14,8 +14,9 @@ class LiquidAnimation extends StatefulWidget {
   // double liquidValue = 0.0;
   Device device;
   final controller;
+  Timer timer;
 
-  LiquidAnimation({this.device, this.controller});
+  LiquidAnimation({this.device, this.controller, this.timer});
 
   // setUsage(double value){
   //   // this.liquidValue = device.level;
@@ -119,18 +120,28 @@ class _LiquidAnimationState extends State<LiquidAnimation>
               SizedBox(
                 height: 20,
               ),
-              InkWell(
+              device.deviceStatus == 1 ?InkWell(
                 onTap: () {
                   Future<ToggleTypes> response;
+                  // if(widget.timer.isActive){
+                  //   widget.timer.cancel();
+                  //   print(widget.timer);
+                  // }
                   if (device.mode == 1) {
+                    // setState(() {
+                    //   device.mode = 0;
+                    // });
                     setState(() {
-                      device.mode = 0;
+
                     });
                     response = APIManager.toggleMode(
                         device.deviceId, App.DEVICE_MODE_NORMAL);
                   } else {
+                    // setState(() {
+                    //   device.mode = 1;
+                    // });
                     setState(() {
-                      device.mode = 1;
+
                     });
                     response = APIManager.toggleMode(
                         device.deviceId, App.DEVICE_MODE_ACTIVE);
@@ -139,7 +150,7 @@ class _LiquidAnimationState extends State<LiquidAnimation>
                   Scaffold.of(context).showSnackBar(SnackBar(
                     duration: Duration(seconds: App.SNACKBAR_DELAY),
                     content: Text(
-                        'Switching to ${device.mode == 1 ? "ACTIVE" : "NORMAL"} mode' ),
+                        'Switching to ${device.mode == 0 ? "ACTIVE" : "NORMAL"} mode' ),
                   ));
                   response.then((resp) {
                     setState(() {
@@ -176,7 +187,7 @@ class _LiquidAnimationState extends State<LiquidAnimation>
                     ],
                   ),
                 ),
-              ),
+              ) : Container(),
               SizedBox(
                 height: 10,
               ),
@@ -184,15 +195,15 @@ class _LiquidAnimationState extends State<LiquidAnimation>
                 onTap: () {
                   Future<ToggleTypes> response;
                   if (device.deviceStatus == 1) {
-                    setState(() {
-                      device.deviceStatus = 0;
-                    });
+                    // setState(() {
+                    //   device.deviceStatus = 0;
+                    // });
                     response =
                         APIManager.toggleOnOff(device.deviceId, App.DEVICE_OFF);
                   } else {
-                    setState(() {
-                      device.deviceStatus = 1;
-                    });
+                    // setState(() {
+                    //   device.deviceStatus = 1;
+                    // });
                     response =
                         APIManager.toggleOnOff(device.deviceId, App.DEVICE_ON);
                   }
@@ -200,7 +211,7 @@ class _LiquidAnimationState extends State<LiquidAnimation>
                   Scaffold.of(context).showSnackBar(SnackBar(
                     duration: Duration(seconds: App.SNACKBAR_DELAY),
                     content: Text(
-                        'Turning the device ${device.deviceStatus == 1 ? "ON" : "OFF"}'),
+                        'Turning the device ${device.deviceStatus == 0 ? "ON" : "OFF"}'),
                   ));
                   response.then((resp) {
                     setState(() {

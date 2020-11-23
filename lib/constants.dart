@@ -27,10 +27,11 @@ class App{
   static String DEVICE_MODE_NORMAL = "0";
   static String DEVICE_TEXT_ACTIVE = "ACTIVE MODE";
   static String DEVICE_TEXT_NORMAL = "NORMAL MODE";
-  static int SNACKBAR_DELAY = 2;
+  static int SNACKBAR_DELAY = 4;
+  static int SNACKBAR_DELAY_ADD_DEVICE = 3;
   static String dateTimeToString(int value){
     // print(value);
-    DateFormat dateFormat = DateFormat('dd-MMM-y HH:mm');
+    DateFormat dateFormat = DateFormat('dd-MMM-y HH:mm:ss');
     DateTime now = DateTime.now();
     // print(now.microsecondsSinceEpoch);
     DateTime dateTime = DateTime.fromMicrosecondsSinceEpoch(( value *1000000 )); //microseconds to seconds

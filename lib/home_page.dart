@@ -6,7 +6,8 @@ import 'package:smrs/constants.dart';
 import 'package:smrs/device_info.dart';
 import 'package:smrs/api_manager.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'device_list_card.dart';
+import 'package:smrs/device_list_card.dart';
+import 'package:smrs/device_add_info.dart';
 
 // TODO: Pull down to refresh
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -23,9 +24,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Future<DevicesModel> _deviceModel;
   Timer timer;
+  bool isProcessing = false;
+  DeviceAdd deviceAddResponse;
+  BuildContext homePageContext;
 
   @override
   void initState() {
+    homePageContext = this.context;
     _deviceModel = APIManager().getDevices();
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
       setState(() {
@@ -57,97 +62,121 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         child: deviceListBuilder(),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: Color(App.bgCardColor)),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RaisedButton(
-                color: Color(App.btnColor),
-                highlightColor: Colors.yellow,
-                splashColor: Colors.green,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("ADD DEVICE",
-                      style: TextStyle(color: Colors.white, fontSize: 20.0)),
-                ),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        TextEditingController _tfDeviceId =
-                            TextEditingController();
-                        TextEditingController _tfDeviceName =
-                            TextEditingController();
-                        final _formKey = GlobalKey<FormState>();
-                        bool isProcessing = false;
-                        // setState(() {
-                        //   isProcessing = false;
-                        // });
-                        return AlertDialog(
-                          title: Text("Add a new device"),
-                          backgroundColor: Color(App.bgCardColor),
-                          actions: [
-                            FlatButton(
-                                child: Text('CANCEL',
-                                    style: TextStyle(color: Colors.white)),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                }),
-                            FlatButton(
-                              child: Text("ADD",
-                                  style: TextStyle(color: Colors.white)),
-                              // color: Color(App.btnColor),
-                              onPressed: () {
-                                print("Btn Press");
-                                print(_tfDeviceName.text);
-                                print(_tfDeviceId.text);
-                                if (_formKey.currentState.validate()) {
-                                  print("Data is Valid");
-                                  setState(() {
-                                    isProcessing = true;
-                                  });
-                                  // _tfDeviceName.addListener(() {
-                                  //   print("Do Task");
-                                  //   setState(() {
-                                  //     isProcessing = true;
-                                  //   });
-                                  // });
-                                  // _tfDeviceName.notifyListeners();
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          return Container(
+            decoration: BoxDecoration(color: Color(App.bgCardColor)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RaisedButton(
+                    color: Color(App.btnColor),
+                    highlightColor: Colors.yellow,
+                    splashColor: Colors.green,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("ADD DEVICE",
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 20.0)),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            TextEditingController _tfDeviceId =
+                                TextEditingController();
+                            TextEditingController _tfDeviceName =
+                                TextEditingController();
+                            final _formKey = GlobalKey<FormState>();
+                            // setState(() {
+                            //   isProcessing = false;
+                            // });
+                            return AlertDialog(
+                              title: Text("Add a new device"),
+                              backgroundColor: Color(App.bgCardColor),
+                              actions: [
+                                FlatButton(
+                                    child: Text('CANCEL',
+                                        style: TextStyle(color: Colors.white)),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    }),
+                                FlatButton(
+                                  child: Text("ADD",
+                                      style: TextStyle(color: Colors.white)),
+                                  // color: Color(App.btnColor),
+                                  onPressed: () {
+                                    print("Btn Press");
+                                    print(_tfDeviceName.text);
+                                    print(_tfDeviceId.text);
+                                    if (_formKey.currentState.validate()) {
+                                      print("Data is Valid");
+                                      setState(() {
+                                        isProcessing = true;
+                                      });
 
-                                  sleep(const Duration(seconds:2));
-                                  Navigator.pop(context);
-                                }
-                              },
-                              padding: EdgeInsets.all(18.0),
-                            )
-                          ],
-                          content: Container(
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                children: [
-                                  buildTextFieldForAlertDialog(
-                                      _tfDeviceId, 'Enter Device ID'),
-                                  buildTextFieldForAlertDialog(
-                                      _tfDeviceName, 'Enter Device Name'),
-                                  SizedBox(height: 25,),
-                                  isProcessing
-                                      ? Center(child: CircularProgressIndicator(backgroundColor: Colors.white,))
-                                      : Container(),
-                                ],
+                                      Future<DeviceAdd> _deviceAddResponse =
+                                          APIManager().addNewDevice(
+                                              _tfDeviceId.text,
+                                              _tfDeviceName.text);
+                                      _deviceAddResponse.then((value) {
+                                        // print("JSONDATA");
+                                        print(value.toJson());
+                                        deviceAddResponse = value;
+                                        Navigator.pop(context);
+                                      });
+                                      // sleep(const Duration(seconds:2));
+
+                                    }
+                                  },
+                                  padding: EdgeInsets.all(18.0),
+                                )
+                              ],
+                              content: Container(
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    children: [
+                                      buildTextFieldForAlertDialog(
+                                          _tfDeviceId, 'Enter Device ID'),
+                                      buildTextFieldForAlertDialog(
+                                          _tfDeviceName, 'Enter Device Name'),
+                                      SizedBox(
+                                        height: 25,
+                                      ),
+                                      // isProcessing
+                                      //     ? Center(child: CircularProgressIndicator(backgroundColor: Colors.white,))
+                                      //     : Container(),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        );
+                            );
+                          }).whenComplete(() {
+                        if (deviceAddResponse.success == 1) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            duration: Duration(
+                                seconds: App.SNACKBAR_DELAY_ADD_DEVICE),
+                            content: Text('New device request has been sent'),
+                          ));
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            duration: Duration(
+                                seconds: App.SNACKBAR_DELAY_ADD_DEVICE),
+                            content: Text(
+                                'Requested device is not available online'),
+                          ));
+                        }
                       });
-                },
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
