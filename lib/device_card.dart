@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'api_manager.dart';
@@ -77,9 +78,20 @@ class _DeviceCardState extends State<DeviceCard> {
                 }
                 var myDevice = snapshot.data;
                 return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     LiquidAnimation(device: myDevice, controller: _controller),
+                    Container(
+                      color: Colors.black87,
+                      padding: EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Device seen on ${App.dateTimeToString(snapshot.data.lastSeen)}"),
+                          Text("Motion detected on ${App.dateTimeToString(snapshot.data.lastMotionSeen)} "),
+                        ],
+                      ),
+                    )
                   ],
                 );
               } else if (snapshot.hasError) {
@@ -94,7 +106,6 @@ class _DeviceCardState extends State<DeviceCard> {
               }
             }),
       ),
-      //
     );
   }
 

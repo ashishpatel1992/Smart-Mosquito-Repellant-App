@@ -37,6 +37,7 @@ class Device {
     this.mode,
     this.deviceStatus,
     this.lastSeen,
+    this.lastMotionSeen,
   });
 
   String deviceId;
@@ -45,6 +46,7 @@ class Device {
   int mode;
   int deviceStatus;
   int lastSeen;
+  int lastMotionSeen;
 
   factory Device.fromJson(Map<String, dynamic> json) => Device(
     deviceId: json["device_id"],
@@ -53,6 +55,7 @@ class Device {
     mode: int.parse(json["mode"]),
     deviceStatus: int.parse(json["device_status"]),
     lastSeen: (json["last_seen"]),
+    lastMotionSeen: (json["last_motion_seen"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -62,5 +65,6 @@ class Device {
     "mode": mode,
     "device_status": deviceStatus,
     "last_seen": lastSeen,
+    "last_motion_seen" : lastMotionSeen,
   };
 }

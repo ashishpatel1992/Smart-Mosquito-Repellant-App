@@ -8,7 +8,7 @@ class App{
   static String appName = 'SMRS';
 
   static String apiUriBase = "https://py-test-mosquito.herokuapp.com"; // "https://bdcc4a743681.ngrok.io/"
-  static int apiRefreshRate = 2;
+  static int apiRefreshRate = 5;
   static Map<int, Color> colorSwatch = {
     50: Color.fromRGBO(24, 52, 71, .1),
     100: Color.fromRGBO(24, 52, 71, .2),
