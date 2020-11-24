@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Smart Mosquito Repellent App',
       theme: ThemeData(
         primarySwatch: MaterialColor(App.baseColor, App.colorSwatch),

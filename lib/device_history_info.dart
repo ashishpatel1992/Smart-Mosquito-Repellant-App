@@ -47,7 +47,7 @@ class Datum {
   String level;
   String mode;
   String motion;
-  String stTime;
+  DateTime stTime;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     deviceStatus: json["device_status"],
@@ -55,7 +55,8 @@ class Datum {
     level: json["level"],
     mode: json["mode"],
     motion: json["motion"],
-    stTime: json["st_time"],
+    // stTime: DateTime.fromMicrosecondsSinceEpoch(
+    //     json["st_time"] * 1000000),
   );
 
   Map<String, dynamic> toJson() => {

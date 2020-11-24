@@ -71,26 +71,25 @@ class APIManager {
   }
   Future<DeviceHistory> getDeviceHistory(String deviceId) async {
     var client = http.Client();
-    var toggleTypeData;
-    var map = new Map<String,dynamic>();
-    map['device_id'] = deviceId;
-    try {
-      var response = await client.post('${App.apiUriBase}/device/history/$deviceId',body: jsonEncode(map),headers: {HttpHeaders.CONTENT_TYPE: "application/json"} );
+    var deviceHistoryData;
 
-      // print(jsonEncode(response));
+    try {
+      var response = await client.get('${App.apiUriBase}/device/history/$deviceId?limit=50');
+
+      // print(jsonEncode(response.body));
       if (response.statusCode == 200) {
         var jsonString = response.body;
-        print(jsonString);
+        // print(jsonString);
         var jsonMap = jsonDecode(jsonString);
         // print(jsonMap);
-        toggleTypeData = ToggleTypes.fromJson(jsonMap);
+        deviceHistoryData = DeviceHistory.fromJson(jsonMap);
       }
     } catch (ex) {
       print('Error in fetching from API  ${ex}');
-      return toggleTypeData;
+      return deviceHistoryData;
     }
     print("Fetch Success");
-    return toggleTypeData;
+    return deviceHistoryData;
   }
   Future<DevicesModel> getDevices() async {
     var client = http.Client();

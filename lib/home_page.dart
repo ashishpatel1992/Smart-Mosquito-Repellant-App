@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:smrs/constants.dart';
 import 'package:smrs/device_info.dart';
 import 'package:smrs/api_manager.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smrs/device_list_card.dart';
 import 'package:smrs/device_add_info.dart';
 
